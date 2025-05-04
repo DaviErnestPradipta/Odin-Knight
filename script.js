@@ -10,15 +10,21 @@ const DIRECTIONS = [
     [2, -1]
 ];
 
-function knightPaths(startSquare, endSquare) {
-    const isValid = (x, y) => (x >= 0 && x < BOARD_SIZE) && (y >= 0 && y < BOARD_SIZE);
-    if (!isValid(startSquare[0], startSquare[1]) || !isValid(endSquare[0], endSquare[1])) {
+const paths = knightPaths([0, 0], [6, 9]);
+if (paths.length === 0) return;
+else {
+    console.log("Shortest paths:", paths);
+    console.log("Minimum moves:", paths[0].length - 1);
+}
+
+function knightPaths(start, end) {
+    if (!areValid(start, end)) {
         console.log("Invalid input");
         return [];
     }
 
     const result = [];
-    const queue = [[startSquare, [startSquare]]]; 
+    const queue = [[start, [start]]]; 
 
     let minimumMoves = null;
 
@@ -28,7 +34,7 @@ function knightPaths(startSquare, endSquare) {
 
         if (minimumMoves !== null && path.length - 1 > minimumMoves) continue;
 
-        if (x === endSquare[0] && y === endSquare[1]) {
+        if (x === end[0] && y === end[1]) {
             if (minimumMoves === null) minimumMoves = path.length - 1;
             result.push(path);
             continue;
@@ -47,9 +53,14 @@ function knightPaths(startSquare, endSquare) {
     return result;
 }
 
-const paths = knightPaths([0, 0], [6, 7]);
-if (paths.length === 0) return;
-else {
-    console.log("Shortest paths:", paths);
-    console.log("Minimum moves:", paths[0].length - 1);
+function areValid(start, end) {
+    return isValid(start[0], start[1]) && isValid(end[0], end[1]);
+}
+
+function isValid(x, y) {
+    return inBounds(x) && inBounds(y);
+}
+
+function inBounds(n) {
+    return n >= 0 && n < BOARD_SIZE;
 }
