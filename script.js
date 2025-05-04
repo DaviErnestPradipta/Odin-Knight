@@ -1,51 +1,47 @@
 const BOARD_SIZE = 8;
 const DIRECTIONS = [
-    [2, 1],
-    [1, 2],
-    [-1, 2],
-    [-2, 1],
-    [-2, -1],
-    [-1, -2],
-    [1, -2],
-    [2, -1]
+    [2, 1], [1, 2], [-1, 2], [-2, 1],
+    [-2, -1], [-1, -2], [1, -2], [2, -1]
 ];
 
-const paths = knightPaths([0, 0], [6, 9]);
-if (paths.length === 0) return;
-else {
-    console.log("Shortest paths:", paths);
-    console.log("Minimum moves:", paths[0].length - 1);
-}
+const start = [0, 0];
+const end = [5, 3];
+const paths = knightPaths(start, end);
+const slicedPaths = sliceFirst(paths);
+print(slicedPaths);
 
 function knightPaths(start, end) {
-    if (!areValid(start, end)) {
-        console.log("Invalid input");
+    if (!isValid(start) || !isValid(end)) {
+        console.error("Invalid input, returning empty array");
         return [];
     }
 
-    const result = [];
-    const queue = [[start, [start]]]; 
+    if (areSame(start, end)) {
+        console.error("Same squares, returning empty array");
+        return [];
+    }
 
-    let minimumMoves = null;
+    const queue = [[start]];
+    const visited = new Set([start.toString()]);
+    const result = [];
 
     while (queue.length > 0) {
-        const [current, path] = queue.shift();
-        const [x, y] = current;
+        const path = queue.shift();
+        const [x, y] = path[path.length - 1];
 
-        if (minimumMoves !== null && path.length - 1 > minimumMoves) continue;
-
-        if (x === end[0] && y === end[1]) {
-            if (minimumMoves === null) minimumMoves = path.length - 1;
-            result.push(path);
+        if (areSame([x, y], end)) {
+            if (result.length === 0 || path.length === result[0].length) result.push(path);
+            else break;
             continue;
         }
 
         for (const [dx, dy] of DIRECTIONS) {
-            const newX = x + dx;
-            const newY = y + dy;
+            const newX = x + dx, newY = y + dy;
+            const newPos = [newX, newY];
 
-            if (isValid(newX, newY) && !path.some(([px, py]) => px === newX && py === newY)) {
-                queue.push([[newX, newY], [...path, [newX, newY]]]);
+            if (isValid(newPos) && !visited.has(newPos.toString())) {
+                visited.add(newPos.toString());
+                queue.push([...path, newPos]);
             }
         }
     }
@@ -53,14 +49,20 @@ function knightPaths(start, end) {
     return result;
 }
 
-function areValid(start, end) {
-    return isValid(start[0], start[1]) && isValid(end[0], end[1]);
+function isValid([x, y]) {
+    return x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE;
 }
 
-function isValid(x, y) {
-    return inBounds(x) && inBounds(y);
+function areSame([x1, y1], [x2, y2]) {
+    return x1 === x2 && y1 === y2;
 }
 
-function inBounds(n) {
-    return n >= 0 && n < BOARD_SIZE;
+function sliceFirst(paths) {
+    return paths.map(path => path.slice(1));
+}
+
+function print(paths) {
+    if (paths.length === 0) return;
+    console.log("Shortest paths:", paths);
+    console.log("Minimum moves:", paths[0].length);
 }
