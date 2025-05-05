@@ -1,8 +1,8 @@
-export function slice(paths) {
+export function slicePaths(paths) {
     return paths.map(path => path.slice(1));
 }
 
-export function print(paths, sliced) {
+export function printPaths(paths, sliced) {
     if (paths.length === 0) return;
 
     const minimumMoves = sliced ? paths[0].length : paths[0].length - 1;

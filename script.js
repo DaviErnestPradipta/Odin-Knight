@@ -1,8 +1,9 @@
-import getPaths from "./getPaths.js";
-import {slice, print} from "./utilities.js";
+import getPaths from "./paths.js";
+import {slicePaths, printPaths} from "./utilities.js";
 
 const start = [2, 1];
-const end = [3, 7];
+const end = [4, 3];
 const paths = getPaths(start, end);
-// print(paths, false);
-print(slice(paths), true);
+
+// printPaths(paths, false);
+printPaths(slicePaths(paths), true);
