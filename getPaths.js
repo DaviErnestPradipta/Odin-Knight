@@ -1,4 +1,4 @@
-import {isValid, areSame} from "./helper.js"
+import {isValid, areSame} from "./helper.js";
 import {DIRECTIONS} from "./constants.js";
 
 export default function getPaths(start, end) {
@@ -32,11 +32,11 @@ export default function getPaths(start, end) {
         for (const [dx, dy] of DIRECTIONS) {
             const newX = x + dx;
             const newY = y + dy;
-            const newPos = `${newX},${newY}`;
+            const newCoordinate = `${newX},${newY}`;
 
-            if (isValid([newX, newY]) && !pathSet.has(newPos)) {
+            if (isValid([newX, newY]) && !pathSet.has(newCoordinate)) {
                 const newPathSet = new Set(pathSet);
-                newPathSet.add(newPos);
+                newPathSet.add(newCoordinate);
                 queue.push([[newX, newY], newPathSet]);
             }
         }
