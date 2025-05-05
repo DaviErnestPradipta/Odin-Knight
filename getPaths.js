@@ -1,44 +1,30 @@
-import {isValid, areSame} from "./helper.js";
+import {check, isValid, isSame, add} from "./helper.js";
 import {DIRECTIONS} from "./constants.js";
 
 export default function getPaths(start, end) {
-    if (!isValid(start) || !isValid(end)) {
-        console.error("Invalid input, returning empty array");
-        return [];
-    }
-
-    if (areSame(start, end)) {
-        console.error("Same squares, returning empty array");
-        return [];
-    }
-
+    try {check(start, end);} catch (error) {return [];}
+    
     const result = [];
-    const queue = [[start, new Set([start.toString()])]];
-
+    const queue = [[start, [start]]];
     let minimumMoves = null;
 
     while (queue.length > 0) {
-        const [current, pathSet] = queue.shift();
-        const [x, y] = current;
+        const [current, path] = queue.shift();
 
-        if (minimumMoves !== null && pathSet.size > minimumMoves) continue;
+        if (minimumMoves !== null && path.length > minimumMoves) break;
 
-        if (x === end[0] && y === end[1]) {
-            if (minimumMoves === null) minimumMoves = pathSet.size;
-            result.push(Array.from(pathSet).map(s => s.split(',').map(Number)));
+        if (isSame(current, end)) {
+            if (minimumMoves === null) minimumMoves = path.length;
+            result.push(path);
             continue;
         }
 
         for (const [dx, dy] of DIRECTIONS) {
-            const newX = x + dx;
-            const newY = y + dy;
-            const newCoordinate = `${newX},${newY}`;
+            const change = [dx, dy];
+            const newCoordinate = add(current, change);
 
-            if (isValid([newX, newY]) && !pathSet.has(newCoordinate)) {
-                const newPathSet = new Set(pathSet);
-                newPathSet.add(newCoordinate);
-                queue.push([[newX, newY], newPathSet]);
-            }
+            if (isValid(newCoordinate) && !path.some(p => isSame(p, newCoordinate)))
+                queue.push([newCoordinate, [...path, newCoordinate]]);
         }
     }
 
