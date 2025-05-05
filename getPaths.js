@@ -3,9 +3,15 @@ import {DIRECTIONS} from "./constants.js";
 
 export default function getPaths(start, end) {
     try {check(start, end);} catch (error) {return [];}
-    
+    return findPaths(start, end);    
+}
+
+function findPaths(start, end) {
     const result = [];
     const queue = [[start, [start]]];
+    const visited = new Set();
+    visited.add(start);
+
     let minimumMoves = null;
 
     while (queue.length > 0) {
@@ -23,7 +29,8 @@ export default function getPaths(start, end) {
             const change = [dx, dy];
             const newCoordinate = add(current, change);
 
-            if (isValid(newCoordinate) && !path.some(p => isSame(p, newCoordinate)))
+            if (isValid(newCoordinate) && !visited.has(newCoordinate))
+                visited.add(newCoordinate);
                 queue.push([newCoordinate, [...path, newCoordinate]]);
         }
     }
